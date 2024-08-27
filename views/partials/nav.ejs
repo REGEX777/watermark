@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/output.css">
+    <link href="https://api.fontshare.com/v2/css?f[]=clash-display@200,300,400,500,600,700,1&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/82eb69e53c.js" crossorigin="anonymous"></script>
+    <title>Document</title>
+</head>
+<body class="bg-[#000] text-white">
+    <div class="flex flex-col items-center justify-between h-screen">
+        <div class="flex items-center font-clash justify-between w-[80%] min-h-24">
+            <p class="text-2xl font-semibold">Watermark</p>
+            <div class="flex items-center justify-center gap-20">
+                <a href="/">Home</a>
+                <a href="/terms">Terms</a>
+                <a href="/policies">Policies</a>
+            </div>
+            <div class="flex flex-row items-center justify-center gap-5">
+                <button id="dropdownDefaultButton" data-dropdown-toggle="dropdown" class="text-white font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center hover:bg-[#181818] transition-all duration-75" type="button"><div class="h-8 w-8 rounded-full bg-white"></div> <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+                    </svg>
+                </button>
+            </div>
+            <div id="dropdown" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
+                <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
+                  <li>
+                    <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Dashboard</a>
+                  </li>
+                  </li>
+                  <li>
+                    <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Sign out</a>
+                  </li>
+                </ul>
+            </div>
+        </div>

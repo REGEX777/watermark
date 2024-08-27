@@ -1,8 +1,12 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: [],
+  content: ["./views/**/*.{html,ejs,js}"],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily:{
+        'clash': 'Clash Display, sans-serif',
+      }
+    },
   },
   plugins: [],
 }
