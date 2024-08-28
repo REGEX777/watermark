@@ -1,39 +1,39 @@
 import express from 'express';
 import path from 'path';
-import fs from 'fs';
+import fs from 'fs/promises';
 import sharp from 'sharp';
+import { fileURLToPath } from 'url';
+
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 
 const router = express.Router();
 
-// Route to serve the editor page
 router.get('/editor', (req, res) => {
-    res.render('editor'); // Render the editor page
+    res.render('editor', { 
+        regularImage: req.query.regularImage, 
+        watermarkImage: req.query.watermarkImage 
+    }); 
 });
 
-// Route to handle image uploads
-router.post('/upload', (req, res) => {
-    const { regularImage, watermarkImage } = req.files;
+router.post('/upload', async (req, res) => {
+    try {
+        const { regularImage, watermarkImage } = req.files;
 
-    // Save regular image
-    const regularImagePath = path.join(__dirname, '../uploads', regularImage.name);
-    regularImage.mv(regularImagePath, (err) => {
-        if (err) {
-            return res.status(500).send('Error saving regular image');
-        }
-    });
+        const regularImagePath = path.join(__dirname, '../uploads', regularImage.name);
+        const watermarkImagePath = path.join(__dirname, '../uploads', watermarkImage.name);
 
-    // Save watermark image
-    const watermarkImagePath = path.join(__dirname, '../uploads', watermarkImage.name);
-    watermarkImage.mv(watermarkImagePath, (err) => {
-        if (err) {
-            return res.status(500).send('Error saving watermark image');
-        }
-    });
+        await regularImage.mv(regularImagePath);
+        await watermarkImage.mv(watermarkImagePath);
 
-    res.redirect(`/editor?regularImage=${regularImage.name}&watermarkImage=${watermarkImage.name}`);
+        res.redirect(`/editor?regularImage=${regularImage.name}&watermarkImage=${watermarkImage.name}`); // i trust url params wayyyy to much :skull:
+    } catch (err) {
+        res.status(500).send('Error uploading images');
+    }
 });
 
-// Route to handle image processing and export
 router.post('/export', async (req, res) => {
     const { regularImage, watermarkImage, x, y } = req.body;
 
@@ -43,15 +43,17 @@ router.post('/export', async (req, res) => {
     const outputImagePath = path.join(__dirname, '../exports', `exported_${Date.now()}.png`);
 
     try {
-        // Overlay the watermark on the regular image
         await sharp(regularImagePath)
             .composite([{ input: watermarkImagePath, top: parseInt(y), left: parseInt(x) }])
             .toFile(outputImagePath);
 
-        res.download(outputImagePath, (err) => {
+        res.download(outputImagePath, async (err) => {
             if (err) {
-                res.status(500).send('Error exporting image');
+                return res.status(500).send('Error exporting image');
             }
+
+            await fs.unlink(regularImagePath);
+            await fs.unlink(watermarkImagePath);
         });
     } catch (err) {
         res.status(500).send('Error processing images');
