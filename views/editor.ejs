@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Editor</title>
+    <style>
+        #canvas-container {
+            position: relative;
+        }
+        #watermark {
+            position: absolute;
+            cursor: move;
+        }
+    </style>
+</head>
+<body>
+    <div id="canvas-container">
+        <img id="regular-image" src="/uploads/<%= regularImage %>" alt="Regular Image">
+        <img id="watermark" src="/uploads/<%= watermarkImage %>" alt="Watermark">
+    </div>
+    <form id="export-form" action="/export" method="POST">
+        <input type="hidden" name="regularImage" value="<%= regularImage %>">
+        <input type="hidden" name="watermarkImage" value="<%= watermarkImage %>">
+        <input type="hidden" name="x" id="x">
+        <input type="hidden" name="y" id="y">
+        <button type="submit">Export Image</button>
+    </form>
+
+    <script>
+        const watermark = document.getElementById('watermark');
+        const xInput = document.getElementById('x');
+        const yInput = document.getElementById('y');
+
+        watermark.addEventListener('mousedown', function(e) {
+            const shiftX = e.clientX - watermark.getBoundingClientRect().left;
+            const shiftY = e.clientY - watermark.getBoundingClientRect().top;
+
+            function moveAt(pageX, pageY) {
+                watermark.style.left = pageX - shiftX + 'px';
+                watermark.style.top = pageY - shiftY + 'px';
+                xInput.value = pageX - shiftX;
+                yInput.value = pageY - shiftY;
+            }
+
+            function onMouseMove(event) {
+                moveAt(event.pageX, event.pageY);
+            }
+
+            document.addEventListener('mousemove', onMouseMove);
+
+            document.addEventListener('mouseup', function() {
+                document.removeEventListener('mousemove', onMouseMove);
+                watermark.onmouseup = null;
+            });
+        });
+
+        watermark.ondragstart = function() {
+            return false;
+        };
+    </script>
+</body>
+</html>
