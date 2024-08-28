@@ -1,5 +1,5 @@
 import express from 'express';
-import bcrypt from 'bcryptjs';
+import bcrypt from 'bcrypt';
 import {
     v4 as uuidv4
 } from 'uuid';
@@ -12,7 +12,6 @@ import {
 const router = express.Router();
 
 
-import generateApiKey from '../controllers/apiKeyGen.js';
 
 // Signup route
 router.get('/', (req, res) => {
@@ -48,8 +47,7 @@ router.post('/', [
 
         const newUser = new User({
             email,
-            password: hashedPassword,
-            apiKey
+            password: hashedPassword
         });
         await newUser.save();
 
