@@ -17,11 +17,12 @@ app.use(express.urlencoded({extended:true}))
 const port = 3000;
 
 import index from './routes/index.js';
-import editor from './routes/editor.js'
+import editor from './routes/editor.js';
+import signup from './routes/signup.js'
 
 app.use('/', index);
 app.use('/editor', editor)
-
+app.use('/signup', signup)
 
 
 app.listen(port, ()=>{
