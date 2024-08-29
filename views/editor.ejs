@@ -4,17 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Watermark Positioning</title>
-    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/output.css">
 </head>
 <body class="bg-gray-900 flex items-center justify-center min-h-screen">
-    <div class="bg-gray-800 p-8 rounded-lg shadow-lg w-full max-w-2xl">
-        <h1 class="text-3xl font-bold mb-6 text-center text-white">Position Your Watermark</h1>
+    <div class="bg-gray-800 p-8 rounded-lg shadow-lg w-full max-w-5xl">
         <div class="flex justify-center mb-6">
             <div class="relative">
                 <img src="/uploads/<%= regularImage %>" alt="Regular Image" id="regularImage"
-                    class="max-w-full h-auto border-2 border-gray-600">
+                    class="w-[600px] h-auto object-contain border-2 border-gray-600">
                 <img src="/uploads/<%= watermarkImage %>" alt="Watermark" id="watermarkImage"
-                    class="absolute opacity-75 border-2 border-gray-600">
+                    class="absolute w-[150px] h-auto opacity-75 border-2 border-gray-600">
             </div>
         </div>
         <form action="/editor/export" method="post" class="space-y-4">
@@ -22,21 +21,21 @@
             <input type="hidden" name="watermarkImage" value="<%= watermarkImage %>">
             <input type="hidden" name="position" id="watermarkPosition">
             <div class="grid grid-cols-2 gap-4 mb-6">
-                <button type="button" data-position="top-left" class="position-button bg-indigo-600 text-white py-2 px-4 rounded-md shadow-sm hover:bg-indigo-700">
+                <button type="button" data-position="top-left" class="position-button bg-indigo-600 text-white py-3 px-5 rounded-md shadow-sm hover:bg-indigo-700">
                     Top Left
                 </button>
-                <button type="button" data-position="top-right" class="position-button bg-indigo-600 text-white py-2 px-4 rounded-md shadow-sm hover:bg-indigo-700">
+                <button type="button" data-position="top-right" class="position-button bg-indigo-600 text-white py-3 px-5 rounded-md shadow-sm hover:bg-indigo-700">
                     Top Right
                 </button>
-                <button type="button" data-position="bottom-left" class="position-button bg-indigo-600 text-white py-2 px-4 rounded-md shadow-sm hover:bg-indigo-700">
+                <button type="button" data-position="bottom-left" class="position-button bg-indigo-600 text-white py-3 px-5 rounded-md shadow-sm hover:bg-indigo-700">
                     Bottom Left
                 </button>
-                <button type="button" data-position="bottom-right" class="position-button bg-indigo-600 text-white py-2 px-4 rounded-md shadow-sm hover:bg-indigo-700">
+                <button type="button" data-position="bottom-right" class="position-button bg-indigo-600 text-white py-3 px-5 rounded-md shadow-sm hover:bg-indigo-700">
                     Bottom Right
                 </button>
             </div>
             <div class="flex justify-center">
-                <button type="submit" class="bg-green-600 text-white py-2 px-4 rounded-md shadow-sm hover:bg-green-700">
+                <button type="submit" class="bg-green-600 text-white py-3 px-6 rounded-md shadow-sm hover:bg-green-700">
                     Export Image
                 </button>
             </div>
@@ -51,6 +50,9 @@
             button.addEventListener('click', () => {
                 const position = button.getAttribute('data-position');
                 watermarkPosition.value = position;
+
+                watermarkImage.style.width = '150px';
+                watermarkImage.style.height = 'auto';
 
                 switch (position) {
                     case 'top-left':
