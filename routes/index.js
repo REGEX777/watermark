@@ -42,4 +42,40 @@ router.post('/', upload.fields([{ name: 'regularImage' }, { name: 'watermarkImag
     }
 });
 
+router.post('/export', async (req, res) => {
+    const { regularImage, watermarkImage, x, y, opacity } = req.body;
+
+    const regularImagePath = path.join(__dirname, '../public/uploads', regularImage);
+    const watermarkImagePath = path.join(__dirname, '../public/uploads', watermarkImage);
+
+    const outputImagePath = path.join(__dirname, '../public/exports', `exported_${Date.now()}.png`);
+
+    try {
+        await fs.mkdir(path.join(__dirname, '../public/exports'), { recursive: true });
+
+        await sharp(regularImagePath)
+            .composite([{
+                input: watermarkImagePath, 
+                top: parseInt(y), 
+                left: parseInt(x),
+                blend: 'overlay',
+                opacity: parseFloat(opacity) || 1.0
+            }])
+            .toFile(outputImagePath);
+
+        res.download(outputImagePath, async (err) => {
+            if (err) {
+                return res.status(500).send('Error exporting image');
+            }
+
+            // delete the images after eve
+            await fs.unlink(outputImagePath);
+        });
+    } catch (err) {
+        console.log(err);
+        res.status(500).send('Error processing images');
+    }
+});
+
+
 export default router;
