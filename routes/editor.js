@@ -47,10 +47,10 @@ router.post('/upload', async (req, res) => {
 });
 
 router.post('/export', async (req, res) => {
-    const { regularImage, watermarkImage, x, y, opacity } = req.body;
+    const { regularImage, watermarkImage, position } = req.body;
 
-    if (!regularImage || !watermarkImage || x === undefined || y === undefined) {
-        return res.status(400).send('Invalid data provided');
+    if (!regularImage || !watermarkImage || !position) {
+        return res.status(400).send('invalid data provided');
     }
 
     const regularImagePath = path.join(__dirname, '../uploads', regularImage);
@@ -58,38 +58,68 @@ router.post('/export', async (req, res) => {
     const outputDir = path.join(__dirname, '../exports');
     const outputImagePath = path.join(outputDir, `exported_${Date.now()}.png`);
 
+    let top, left;
+    switch (position) {
+        case 'top-left':
+            top = 0;
+            left = 0;
+            break;
+        case 'top-right':
+            top = 0;
+            left = await getImageWidth(regularImagePath) - await getImageWidth(watermarkImagePath);
+            break;
+        case 'bottom-left':
+            top = await getImageHeight(regularImagePath) - await getImageHeight(watermarkImagePath);
+            left = 0;
+            break;
+        case 'bottom-right':
+            top = await getImageHeight(regularImagePath) - await getImageHeight(watermarkImagePath);
+            left = await getImageWidth(regularImagePath) - await getImageWidth(watermarkImagePath);
+            break;
+    }
+
     try {
         await fs.mkdir(outputDir, { recursive: true });
 
         await sharp(regularImagePath)
             .composite([{
                 input: watermarkImagePath,
-                top: parseInt(y, 10),
-                left: parseInt(x, 10),
+                top: parseInt(top, 10),
+                left: parseInt(left, 10),
                 blend: 'overlay',
-                opacity: parseFloat(opacity) || 1.0
+                opacity: 0.75
             }])
             .toFile(outputImagePath);
 
         res.download(outputImagePath, async (err) => {
             if (err) {
-                console.error('Error exporting image:', err);
-                return res.status(500).send('Error exporting image');
+                console.error('error exporting image:', err);
+                return res.status(500).send('error exporting image');
             }
 
-            try {
-                // yeet the files from the system after download
+            try { //yeet the files out of the machine
                 await fs.unlink(outputImagePath);
                 await fs.unlink(regularImagePath);
                 await fs.unlink(watermarkImagePath);
             } catch (cleanupErr) {
-                console.error('Error cleaning up files:', cleanupErr);
+                console.error('error cleaning up files:', cleanupErr);
             }
         });
     } catch (err) {
-        console.error('Error processing images:', err);
-        res.status(500).send('Error processing images');
+        console.error('image processing error', err);
+        res.status(500).send('image processing error');
     }
 });
+
+async function getImageWidth(imagePath) {
+    const { width } = await sharp(imagePath).metadata();
+    return width;
+}
+
+async function getImageHeight(imagePath) {
+    const { height } = await sharp(imagePath).metadata();
+    return height;
+}
+
 
 export default router;
