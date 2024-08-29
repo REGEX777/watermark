@@ -1,33 +1,43 @@
 import express from "express";
-import path from 'path'
+import path from 'path';
 import { fileURLToPath } from 'url';
+import multer from 'multer';
+import fs from 'fs/promises';
+import {v4 as uuidv4} from 'uuid';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const router = express.Router();
 
-
-router.get('/', (req, res)=>{
-    res.render('index')
+// oh dear dog multer pls handle the images
+const storage = multer.diskStorage({
+    destination: function(req, file, cb){
+        cb(null, 'public/uploads/');
+    },
+    filename: function(req, file, cb){
+        const extension = file.originalname.split('.').pop();
+        const name = `${uuidv4()}.${extension}` //new name 
+        cb(null, name);
+    }
 })
+const upload = multer({ storage: storage });
 
+router.get('/', (req, res) => {
+    res.render('index');
+});
 
-router.post('/upload', async (req, res) => {
+router.post('/', upload.fields([{ name: 'regularImage' }, { name: 'watermarkImage' }]), async (req, res) => {
     try {
         const { regularImage, watermarkImage } = req.files;
 
-        const imageDir = path.join(__dirname, '../uploads');
-        const regularImagePath = path.join(imageDir, regularImage.name);
-        const watermarkImagePath = path.join(imageDir, watermarkImage.name);
+        if (!regularImage || !watermarkImage) {
+            return res.status(400).send('Both images are required');
+        }
 
-        await fs.mkdir(imageDir, { recursive: true });
-
-        await regularImage.mv(regularImagePath);
-        await watermarkImage.mv(watermarkImagePath);
-
-        res.redirect(`/editor?regularImage=${regularImage.name}&watermarkImage=${watermarkImage.name}`);
+        res.redirect(`/editor?regularImage=${regularImage[0].originalname}&watermarkImage=${watermarkImage[0].originalname}`);
     } catch (err) {
+        console.log(err);
         res.status(500).send('Error uploading images');
     }
 });
