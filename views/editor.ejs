@@ -1,13 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Watermark Editor</title>
     <link rel="stylesheet" href="/css/styles.css">
 </head>
-
 <body class="bg-gray-900 flex items-center justify-center min-h-screen">
     <div class="bg-gray-800 p-8 rounded-lg shadow-lg w-full max-w-2xl">
         <h1 class="text-3xl font-bold mb-6 text-center text-white">Position Your Watermark</h1>
@@ -32,38 +30,6 @@
             </div>
         </form>
     </div>
-    <script>
-        const watermarkImage = document.getElementById('watermarkImage');
-        const watermarkX = document.getElementById('watermarkX');
-        const watermarkY = document.getElementById('watermarkY');
-
-        watermarkImage.onmousedown = function (event) {
-            let shiftX = event.clientX - watermarkImage.getBoundingClientRect().left;
-            let shiftY = event.clientY - watermarkImage.getBoundingClientRect().top;
-
-            function moveAt(pageX, pageY) {
-                watermarkImage.style.left = pageX - shiftX + 'px';
-                watermarkImage.style.top = pageY - shiftY + 'px';
-                watermarkX.value = parseInt(watermarkImage.style.left);
-                watermarkY.value = parseInt(watermarkImage.style.top);
-            }
-
-            function onMouseMove(event) {
-                moveAt(event.pageX, event.pageY);
-            }
-
-            document.addEventListener('mousemove', onMouseMove);
-
-            watermarkImage.onmouseup = function () {
-                document.removeEventListener('mousemove', onMouseMove);
-                watermarkImage.onmouseup = null;
-            };
-        };
-
-        watermarkImage.ondragstart = function () {
-            return false;
-        };
-    </script>
+    <script src="/js/watermark.js"></script>
 </body>
-
 </html>

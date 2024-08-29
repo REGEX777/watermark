@@ -16,9 +16,9 @@ router.get('/', (req, res) => {
         return res.status(400).send('Images not provided');
     }
 
-    res.render('editor', { 
-        regularImage, 
-        watermarkImage 
+    res.render('editor', {
+        regularImage,
+        watermarkImage
     });
 });
 
@@ -63,8 +63,8 @@ router.post('/export', async (req, res) => {
 
         await sharp(regularImagePath)
             .composite([{
-                input: watermarkImagePath, 
-                top: parseInt(y, 10), 
+                input: watermarkImagePath,
+                top: parseInt(y, 10),
                 left: parseInt(x, 10),
                 blend: 'overlay',
                 opacity: parseFloat(opacity) || 1.0
