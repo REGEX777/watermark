@@ -10,11 +10,10 @@
     <div class="bg-gray-800 p-8 rounded-lg shadow-lg w-full max-w-2xl">
         <h1 class="text-3xl font-bold mb-6 text-center text-white">Position Your Watermark</h1>
         <div class="flex justify-center mb-6">
-            <div class="relative">
-                <img src="/uploads/<%= regularImage %>" alt="Regular Image" id="regularImage"
-                    class="max-w-full h-auto border-2 border-gray-600">
+            <div class="relative max-w-full h-auto border-2 border-gray-600" id="imageContainer">
+                <img src="/uploads/<%= regularImage %>" alt="Regular Image" id="regularImage" class="max-w-full h-auto">
                 <img src="/uploads/<%= watermarkImage %>" alt="Watermark" id="watermarkImage"
-                    class="absolute top-0 left-0 opacity-75 cursor-move border-2 border-gray-600">
+                    class="absolute top-0 left-0 opacity-75 cursor-move">
             </div>
         </div>
         <form action="/editor/export" method="post" class="space-y-4">
