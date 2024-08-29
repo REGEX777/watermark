@@ -12,19 +12,23 @@
         <div class="flex justify-center mb-6">
             <div class="relative w-96 h-96 border-2 border-gray-600" id="imageContainer">
                 <img src="/uploads/<%= regularImage %>" alt="Regular Image" id="regularImage" class="w-full h-full object-cover">
-                <img src="/uploads/<%= watermarkImage %>" alt="Watermark" id="watermarkImage" class="absolute top-0 left-0 opacity-75 cursor-move">
+                <img src="/uploads/<%= watermarkImage %>" alt="Watermark" id="watermarkImage" class="absolute opacity-75">
             </div>
         </div>
-        <form action="/editor/export" method="post" class="space-y-4">
+        <div class="flex justify-center mb-6">
+            <button onclick="setPosition('top-left')" class="bg-blue-600 text-white py-2 px-4 rounded-md mx-1 hover:bg-blue-700">Top Left</button>
+            <button onclick="setPosition('top-right')" class="bg-blue-600 text-white py-2 px-4 rounded-md mx-1 hover:bg-blue-700">Top Right</button>
+            <button onclick="setPosition('bottom-left')" class="bg-blue-600 text-white py-2 px-4 rounded-md mx-1 hover:bg-blue-700">Bottom Left</button>
+            <button onclick="setPosition('bottom-right')" class="bg-blue-600 text-white py-2 px-4 rounded-md mx-1 hover:bg-blue-700">Bottom Right</button>
+        </div>
+        <form action="/editor/export" method="post" class="flex justify-center">
             <input type="hidden" name="regularImage" value="<%= regularImage %>">
             <input type="hidden" name="watermarkImage" value="<%= watermarkImage %>">
             <input type="hidden" name="x" id="watermarkX">
             <input type="hidden" name="y" id="watermarkY">
-            <div class="flex justify-center">
-                <button type="submit" class="bg-indigo-600 text-white py-2 px-4 rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                    Export Image
-                </button>
-            </div>
+            <button type="submit" class="bg-indigo-600 text-white py-2 px-4 rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                Export Image
+            </button>
         </form>
     </div>
     <script src="/js/watermark.js"></script>
