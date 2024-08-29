@@ -1,4 +1,4 @@
-// elements initiliaztipn
+// elements initialization
 const watermarkImage = document.getElementById('watermarkImage');
 const watermarkX = document.getElementById('watermarkX');
 const watermarkY = document.getElementById('watermarkY');
@@ -14,17 +14,22 @@ watermarkImage.style.top = '0px';
 watermarkX.value = 0;
 watermarkY.value = 0;
 
+let isDragging = false;
+
 watermarkImage.onmousedown = function (event) {
     event.preventDefault();
+    isDragging = true;
 
     let shiftX = event.clientX - watermarkImage.getBoundingClientRect().left;
     let shiftY = event.clientY - watermarkImage.getBoundingClientRect().top;
 
     function moveAt(pageX, pageY) {
+        if (!isDragging) return;
+
         let newLeft = pageX - shiftX - imageContainer.getBoundingClientRect().left;
         let newTop = pageY - shiftY - imageContainer.getBoundingClientRect().top;
 
-        // Ensure the watermark stays within the container
+        // this will ensure that the watermark logo stays in the container
         if (newLeft < 0) newLeft = 0;
         if (newTop < 0) newTop = 0;
         if (newLeft + watermarkImage.clientWidth > regularImage.clientWidth)
@@ -46,6 +51,7 @@ watermarkImage.onmousedown = function (event) {
     document.addEventListener('mousemove', onMouseMove);
 
     watermarkImage.onmouseup = function () {
+        isDragging = false;
         document.removeEventListener('mousemove', onMouseMove);
         watermarkImage.onmouseup = null;
     };
