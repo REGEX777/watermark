@@ -49,14 +49,14 @@ router.post('/upload', async (req, res) => {
 });
 
 router.post('/export', async (req, res) => {
-    const { regularImage, watermarkImage, position } = req.body;
+    const { regularImage, watermarkImage, position, opacity } = req.body;
 
-    if (!regularImage || !watermarkImage || !position) {
+    if (!regularImage || !watermarkImage || !position || opacity === undefined) {
         return res.status(400).send('Invalid data provided');
     }
 
-    const regularImagePath = path.join(__dirname, '../uploads', regularImage);
-    const watermarkImagePath = path.join(__dirname, '../uploads', watermarkImage);
+    const regularImagePath = path.join(__dirname, '../public/uploads', regularImage);
+    const watermarkImagePath = path.join(__dirname, '../public/uploads', watermarkImage);
     const outputDir = path.join(__dirname, '../exports');
     const outputImagePath = path.join(outputDir, `exported_${Date.now()}.png`);
 
@@ -94,12 +94,13 @@ router.post('/export', async (req, res) => {
         }
 
         await sharp(regularImagePath)
+            .resize(regularImageMetadata.width, regularImageMetadata.height) // size must match the div prievow in the frotnend
             .composite([{
                 input: watermarkImagePath,
                 top: top,
                 left: left,
                 blend: 'overlay',
-                opacity: 0.75
+                opacity: parseFloat(opacity) / 100 // take opacity from the frontend and throw it here yeeeett
             }])
             .toFile(outputImagePath);
 
@@ -122,5 +123,6 @@ router.post('/export', async (req, res) => {
         res.status(500).send('Image processing error');
     }
 });
+
 
 export default router;

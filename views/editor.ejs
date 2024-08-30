@@ -21,6 +21,10 @@
             <input type="hidden" name="regularImage" value="<%= regularImage %>">
             <input type="hidden" name="watermarkImage" value="<%= watermarkImage %>">
             <input type="hidden" name="position" id="watermarkPosition">
+            <div class="mb-4">
+                <label for="opacity" class="block text-white mb-2">Watermark Opacity</label>
+                <input type="range" id="opacity" name="opacity" min="0" max="100" value="75" class="w-full">
+            </div>
             <div class="grid grid-cols-2 gap-4 mb-6">
                 <button type="button" data-position="top-left"
                         class="position-button bg-indigo-600 text-white py-2 px-4 rounded-md shadow-sm hover:bg-indigo-700">
