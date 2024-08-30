@@ -12,10 +12,9 @@
         <div class="flex justify-center mb-6">
             <div class="relative">
                 <img src="/uploads/<%= regularImage %>" alt="Regular Image" id="regularImage"
-                     class="w-[800px] h-auto border-2 border-gray-600 rounded-md">
-
+                     class="w-[800px] h-auto rounded-md">
                 <img src="/uploads/<%= watermarkImage %>" alt="Watermark" id="watermarkImage"
-                     class="absolute w-10 h-10 m-4 opacity-75 border-2 border-gray-600 rounded-md">
+                     class="absolute w-10 h-10 opacity-75 rounded-md transform translate-x-1/2 translate-y-1/2 top-1/2 left-1/2">
             </div>
         </div>
         <form action="/editor/export" method="post" class="space-y-4">
@@ -54,36 +53,30 @@
         const watermarkPosition = document.getElementById('watermarkPosition');
         const positionButtons = document.querySelectorAll('.position-button');
 
+        // should be at the center by default
+        watermarkPosition.value = 'center';
+
         positionButtons.forEach(button => {
             button.addEventListener('click', () => {
                 const position = button.getAttribute('data-position');
                 watermarkPosition.value = position;
 
-                watermarkImage.style.width = '40px';
-                watermarkImage.style.height = '40px';
-
-                const margin = '10px';
+                // eeeee
+                watermarkImage.classList.remove('top-1/2', 'left-1/2', 'bottom-1/2', 'right-1/2', 'translate-x-1/2', 'translate-y-1/2');
+                watermarkImage.classList.remove('top-0', 'left-0', 'bottom-0', 'right-0');
 
                 switch (position) {
                     case 'top-left':
-                        watermarkImage.style.top = margin;
-                        watermarkImage.style.left = margin;
+                        watermarkImage.classList.add('top-0', 'left-0', 'm-2');
                         break;
                     case 'top-right':
-                        watermarkImage.style.top = margin;
-                        watermarkImage.style.right = margin;
-                        watermarkImage.style.left = 'auto';
+                        watermarkImage.classList.add('top-0', 'right-0', 'm-2');
                         break;
                     case 'bottom-left':
-                        watermarkImage.style.bottom = margin;
-                        watermarkImage.style.left = margin;
-                        watermarkImage.style.top = 'auto';
+                        watermarkImage.classList.add('bottom-0', 'left-0', 'm-2');
                         break;
                     case 'bottom-right':
-                        watermarkImage.style.bottom = margin;
-                        watermarkImage.style.right = margin;
-                        watermarkImage.style.top = 'auto';
-                        watermarkImage.style.left = 'auto';
+                        watermarkImage.classList.add('bottom-0', 'right-0', 'm-2');
                         break;
                 }
             });
