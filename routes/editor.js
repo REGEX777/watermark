@@ -49,78 +49,57 @@ router.post('/upload', async (req, res) => {
 });
 
 router.post('/export', async (req, res) => {
-    const { regularImage, watermarkImage, position, opacity } = req.body;
+    const { regularImage, watermarkImage, position, opacity, size } = req.body;
 
-    if (!regularImage || !watermarkImage || !position || opacity === undefined) {
-        return res.status(400).send('Invalid data provided');
-    }
-
-    const regularImagePath = path.join(__dirname, '../public/uploads', regularImage);
-    const watermarkImagePath = path.join(__dirname, '../public/uploads', watermarkImage);
-    const outputDir = path.join(__dirname, '../exports');
-    const outputImagePath = path.join(outputDir, `exported_${Date.now()}.png`);
+    const regularImagePath = path.join(__dirname, '..', 'public', 'uploads', regularImage);
+    const watermarkImagePath = path.join(__dirname, '..', 'public', 'uploads', watermarkImage);
+    const outputImagePath = path.join(__dirname, '..', 'public', 'uploads', `output-${Date.now()}.png`);
 
     try {
-        await fs.mkdir(outputDir, { recursive: true });
+        const watermarkBuffer = await sharp(watermarkImagePath)
+            .resize(parseInt(size), parseInt(size))
+            .png()
+            .toBuffer();
 
-        const [regularImageMetadata, watermarkImageMetadata] = await Promise.all([
-            sharp(regularImagePath).metadata(),
-            sharp(watermarkImagePath).metadata()
-        ]);
+        const { width, height } = await sharp(regularImagePath).metadata();
 
-        let top, left;
-        const margin = 10;
+        let left = 0;
+        let top = 0;
+        const margin = 10; 
 
         switch (position) {
             case 'top-left':
-                top = margin;
                 left = margin;
+                top = margin;
                 break;
             case 'top-right':
+                left = width - parseInt(size) - margin;
                 top = margin;
-                left = regularImageMetadata.width - watermarkImageMetadata.width - margin;
                 break;
             case 'bottom-left':
-                top = regularImageMetadata.height - watermarkImageMetadata.height - margin;
                 left = margin;
+                top = height - parseInt(size) - margin;
                 break;
             case 'bottom-right':
-                top = regularImageMetadata.height - watermarkImageMetadata.height - margin;
-                left = regularImageMetadata.width - watermarkImageMetadata.width - margin;
+                left = width - parseInt(size) - margin;
+                top = height - parseInt(size) - margin;
                 break;
-            default: // center
-                top = Math.round((regularImageMetadata.height - watermarkImageMetadata.height) / 2);
-                left = Math.round((regularImageMetadata.width - watermarkImageMetadata.width) / 2);
         }
 
         await sharp(regularImagePath)
-            .resize(regularImageMetadata.width, regularImageMetadata.height) // size must match the div prievow in the frotnend
             .composite([{
-                input: watermarkImagePath,
+                input: watermarkBuffer,
                 top: top,
                 left: left,
-                blend: 'overlay',
-                opacity: parseFloat(opacity) / 100 // take opacity from the frontend and throw it here yeeeett
+                opacity: parseInt(opacity) / 100
             }])
             .toFile(outputImagePath);
 
-        res.download(outputImagePath, async (err) => {
-            if (err) {
-                console.error('Error exporting image:', err);
-                return res.status(500).send('Error exporting image');
-            }
+        res.download(outputImagePath);
 
-            try {
-                await fs.unlink(outputImagePath);
-                await fs.unlink(regularImagePath);
-                await fs.unlink(watermarkImagePath);
-            } catch (cleanupErr) {
-                console.error('Error cleaning up files:', cleanupErr);
-            }
-        });
     } catch (err) {
-        console.error('Image processing error', err);
-        res.status(500).send('Image processing error');
+        console.error(err);
+        res.status(500).send('Error processing the image.');
     }
 });
 

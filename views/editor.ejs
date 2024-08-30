@@ -25,6 +25,21 @@
                 <label for="opacity" class="block text-white mb-2">Watermark Opacity</label>
                 <input type="range" id="opacity" name="opacity" min="0" max="100" value="75" class="w-full">
             </div>
+            <div class="mb-4">
+                <label for="size" class="block text-white mb-2">Watermark Size</label>
+                <select id="size" name="size" class="w-full rounded-md">
+                    <option value="10">10x10</option>
+                    <option value="20">20x20</option>
+                    <option value="30">30x30</option>
+                    <option value="40">40x40</option>
+                    <option value="50">50x50</option>
+                    <option value="60">60x60</option>
+                    <option value="70">70x70</option>
+                    <option value="80">80x80</option>
+                    <option value="90">90x90</option>
+                    <option value="100">100x100</option>
+                </select>
+            </div>
             <div class="grid grid-cols-2 gap-4 mb-6">
                 <button type="button" data-position="top-left"
                         class="position-button bg-indigo-600 text-white py-2 px-4 rounded-md shadow-sm hover:bg-indigo-700">
@@ -56,16 +71,30 @@
         const watermarkImage = document.getElementById('watermarkImage');
         const watermarkPosition = document.getElementById('watermarkPosition');
         const positionButtons = document.querySelectorAll('.position-button');
+        const opacityInput = document.getElementById('opacity');
+        const sizeDropdown = document.getElementById('size');
 
-        // should be at the center by default
         watermarkPosition.value = 'center';
+        watermarkImage.style.opacity = opacityInput.value / 100;
+        watermarkImage.style.width = `${sizeDropdown.value}px`;
+        watermarkImage.style.height = `${sizeDropdown.value}px`;
+
+        // real time preview
+        opacityInput.addEventListener('input', () => {
+            watermarkImage.style.opacity = opacityInput.value / 100;
+        });
+
+        // real time siez
+        sizeDropdown.addEventListener('change', () => {
+            watermarkImage.style.width = `${sizeDropdown.value}px`;
+            watermarkImage.style.height = `${sizeDropdown.value}px`;
+        });
 
         positionButtons.forEach(button => {
             button.addEventListener('click', () => {
                 const position = button.getAttribute('data-position');
                 watermarkPosition.value = position;
 
-                // eeeee
                 watermarkImage.classList.remove('top-1/2', 'left-1/2', 'bottom-1/2', 'right-1/2', 'translate-x-1/2', 'translate-y-1/2');
                 watermarkImage.classList.remove('top-0', 'left-0', 'bottom-0', 'right-0');
 
