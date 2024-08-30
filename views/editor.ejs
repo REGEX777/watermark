@@ -8,67 +8,75 @@
     <link rel="stylesheet" href="/css/output.css">
 </head>
 
-<body class="bg-gray-900 flex items-center justify-center min-h-screen">
-    <div class="bg-gray-800 p-8 rounded-lg shadow-lg w-full max-w-4xl">
-        <h1 class="text-3xl font-bold mb-6 text-center text-white">Position Your Watermark</h1>
-        <div class="relative flex justify-center mb-6">
-            <div id="imageContainer" class="relative">
+<body class="bg-gray-900 flex items-center justify-center min-h-screen p-4">
+    <div class="bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-5xl">
+        <h1 class="text-4xl font-extrabold mb-8 text-center text-white">Watermark Positioning</h1>
+        <div class="relative mb-8">
+            <div id="imageContainer" class="relative mx-auto">
                 <img src="/uploads/<%= regularImage %>" alt="Regular Image" id="regularImage"
-                    class="w-[800px] h-auto rounded-md shadow-lg">
+                    class="w-full max-w-[800px] h-auto rounded-lg shadow-md border border-gray-700">
                 <img src="/uploads/<%= watermarkImage %>" alt="Watermark" id="watermarkImage"
-                    class="absolute opacity-75 rounded-md">
+                    class="absolute rounded-lg">
             </div>
         </div>
-        <form action="/editor/export" method="post" class="space-y-4">
+        <form action="/editor/export" method="post" class="space-y-6">
             <input type="hidden" name="regularImage" value="<%= regularImage %>">
             <input type="hidden" name="watermarkImage" value="<%= watermarkImage %>">
             <input type="hidden" name="position" id="watermarkPosition">
-            <div class="mb-4">
-                <label for="opacity" class="block text-white mb-2">Watermark Opacity</label>
-                <input type="range" id="opacity" name="opacity" min="0" max="100" value="75" class="w-full bg-gray-700 border-gray-600 rounded-md focus:ring-indigo-500">
+
+            <div class="flex flex-col gap-4">
+                <div class="flex items-center justify-between">
+                    <label for="opacity" class="text-white font-semibold">Watermark Opacity</label>
+                    <input type="range" id="opacity" name="opacity" min="0" max="100" value="75"
+                        class="w-full bg-gray-700 border-gray-600 rounded-md focus:ring-indigo-500">
+                </div>
+                <div class="flex items-center justify-between">
+                    <label for="size" class="text-white font-semibold">Watermark Size</label>
+                    <select id="size" name="size"
+                        class="bg-gray-700 border-gray-600 rounded-md focus:ring-indigo-500 text-white">
+                        <option value="10">10x10</option>
+                        <option value="20">20x20</option>
+                        <option value="30">30x30</option>
+                        <option value="40">40x40</option>
+                        <option value="50">50x50</option>
+                        <option value="60">60x60</option>
+                        <option value="70">70x70</option>
+                        <option value="80">80x80</option>
+                        <option value="90">90x90</option>
+                        <option value="100">100x100</option>
+                        <option value="120">120x120</option>
+                        <option value="140">140x140</option>
+                        <option value="160">160x160</option>
+                    </select>
+                </div>
             </div>
-            <div class="mb-4">
-                <label for="size" class="block text-white mb-2">Watermark Size</label>
-                <select id="size" name="size" class="w-full rounded-md bg-gray-700 border-gray-600 focus:ring-indigo-500">
-                    <option value="10">10x10</option>
-                    <option value="20">20x20</option>
-                    <option value="30">30x30</option>
-                    <option value="40">40x40</option>
-                    <option value="50">50x50</option>
-                    <option value="60">60x60</option>
-                    <option value="70">70x70</option>
-                    <option value="80">80x80</option>
-                    <option value="90">90x90</option>
-                    <option value="100">100x100</option>
-                    <option value="120">120x120</option>
-                    <option value="140">140x140</option>
-                    <option value="160">160x160</option>
-                </select>
-            </div>
-            <div class="grid grid-cols-2 gap-4 mb-6">
+
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
                 <button type="button" data-position="top-left"
-                    class="position-button bg-indigo-600 text-white py-2 px-4 rounded-md shadow-sm hover:bg-indigo-700">
+                    class="position-button bg-indigo-600 text-white py-2 px-4 rounded-md shadow-md hover:bg-indigo-700 transition-colors">
                     Top Left
                 </button>
                 <button type="button" data-position="top-right"
-                    class="position-button bg-indigo-600 text-white py-2 px-4 rounded-md shadow-sm hover:bg-indigo-700">
+                    class="position-button bg-indigo-600 text-white py-2 px-4 rounded-md shadow-md hover:bg-indigo-700 transition-colors">
                     Top Right
                 </button>
                 <button type="button" data-position="bottom-left"
-                    class="position-button bg-indigo-600 text-white py-2 px-4 rounded-md shadow-sm hover:bg-indigo-700">
+                    class="position-button bg-indigo-600 text-white py-2 px-4 rounded-md shadow-md hover:bg-indigo-700 transition-colors">
                     Bottom Left
                 </button>
                 <button type="button" data-position="bottom-right"
-                    class="position-button bg-indigo-600 text-white py-2 px-4 rounded-md shadow-sm hover:bg-indigo-700">
+                    class="position-button bg-indigo-600 text-white py-2 px-4 rounded-md shadow-md hover:bg-indigo-700 transition-colors">
                     Bottom Right
                 </button>
                 <button type="button" data-position="center"
-                    class="position-button bg-indigo-600 text-white py-2 px-4 rounded-md shadow-sm hover:bg-indigo-700">
+                    class="position-button bg-indigo-600 text-white py-2 px-4 rounded-md shadow-md hover:bg-indigo-700 transition-colors">
                     Center
                 </button>
             </div>
+
             <div class="flex justify-center">
-                <button type="submit" class="bg-green-600 text-white py-2 px-4 rounded-md shadow-sm hover:bg-green-700">
+                <button type="submit"
+                    class="bg-green-600 text-white py-3 px-6 rounded-md shadow-md hover:bg-green-700 transition-colors">
                     Export Image
                 </button>
             </div>
