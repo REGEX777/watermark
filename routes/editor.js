@@ -57,7 +57,7 @@ router.post('/export', async (req, res) => {
 
     try {
         const watermarkBuffer = await sharp(watermarkImagePath)
-            .resize(parseInt(size*1.5), parseInt(size*1.5))
+            .resize(parseInt(size * 1.5), parseInt(size * 1.5))
             .png()
             .toBuffer();
 
@@ -108,6 +108,7 @@ router.post('/export', async (req, res) => {
         res.status(500).send('Error processing the image.');
     }
 });
+
 
 
 export default router;
