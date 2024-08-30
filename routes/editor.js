@@ -116,7 +116,23 @@ router.post('/export', async (req, res) => {
             }])
             .toFile(outputImagePath);
 
-        res.download(outputImagePath);
+        // download the file and then we delete it bonk
+        res.download(outputImagePath, async (err) => {
+            if (err) {
+                console.error('Error downloading the image:', err);
+                return;
+            }
+
+            try {
+                await Promise.all([
+                    fs.unlink(regularImagePath),
+                    fs.unlink(watermarkImagePath),
+                    fs.unlink(outputImagePath)
+                ]);
+            } catch (deleteErr) {
+                console.error('Error deleting files:', deleteErr);
+            }
+        });
 
     } catch (err) {
         console.error(err);

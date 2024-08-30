@@ -11,12 +11,12 @@
 <body class="bg-gray-900 flex items-center justify-center min-h-screen">
     <div class="bg-gray-800 p-8 rounded-lg shadow-lg w-full max-w-4xl">
         <h1 class="text-3xl font-bold mb-6 text-center text-white">Position Your Watermark</h1>
-        <div class="flex justify-center mb-6">
+        <div class="relative flex justify-center mb-6">
             <div id="imageContainer" class="relative">
                 <img src="/uploads/<%= regularImage %>" alt="Regular Image" id="regularImage"
-                    class="w-[800px] h-auto rounded-md">
+                    class="w-[800px] h-auto rounded-md shadow-lg">
                 <img src="/uploads/<%= watermarkImage %>" alt="Watermark" id="watermarkImage"
-                    class="absolute w-10 h-10 opacity-75 rounded-md">
+                    class="absolute opacity-75 rounded-md">
             </div>
         </div>
         <form action="/editor/export" method="post" class="space-y-4">
@@ -25,11 +25,11 @@
             <input type="hidden" name="position" id="watermarkPosition">
             <div class="mb-4">
                 <label for="opacity" class="block text-white mb-2">Watermark Opacity</label>
-                <input type="range" id="opacity" name="opacity" min="0" max="100" value="75" class="w-full">
+                <input type="range" id="opacity" name="opacity" min="0" max="100" value="75" class="w-full bg-gray-700 border-gray-600 rounded-md focus:ring-indigo-500">
             </div>
             <div class="mb-4">
                 <label for="size" class="block text-white mb-2">Watermark Size</label>
-                <select id="size" name="size" class="w-full rounded-md">
+                <select id="size" name="size" class="w-full rounded-md bg-gray-700 border-gray-600 focus:ring-indigo-500">
                     <option value="10">10x10</option>
                     <option value="20">20x20</option>
                     <option value="30">30x30</option>
