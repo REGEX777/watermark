@@ -60,17 +60,29 @@ router.post('/export', async (req, res) => {
 
         const watermarkBuffer = await sharp(watermarkImagePath)
             .resize({
-                width: Math.min(parseInt(size * 1.5), regularWidth), 
-                height: Math.min(parseInt(size * 1.5), regularHeight) 
+                width: Math.min(parseInt(size * 1.5), regularWidth),
+                height: Math.min(parseInt(size * 1.5), regularHeight)
             })
-            .png()
+            .toFormat('png')  
             .toBuffer();
 
-        const { width: watermarkWidth, height: watermarkHeight } = await sharp(watermarkBuffer).metadata();
+        // alpha channels edited for adjusting the opacity
+        const transparentWatermark = await sharp(watermarkBuffer)
+            .composite([{
+                input: Buffer.from([
+                    255, 255, 255, Math.round(255 * parseFloat(opacity) / 100) 
+                ]),
+                raw: { width: 1, height: 1, channels: 4 },
+                tile: true,
+                blend: 'dest-in'
+            }])
+            .toBuffer();
+
+        const { width: watermarkWidth, height: watermarkHeight } = await sharp(transparentWatermark).metadata();
 
         let left = 0;
         let top = 0;
-        const margin = 10; 
+        const margin = 10;
 
         switch (position) {
             case 'top-left':
@@ -97,11 +109,10 @@ router.post('/export', async (req, res) => {
 
         await sharp(regularImagePath)
             .composite([{
-                input: watermarkBuffer,
+                input: transparentWatermark,
                 top: top,
                 left: left,
-                blend: 'over',
-                opacity: parseFloat(opacity) / 100
+                blend: 'over'
             }])
             .toFile(outputImagePath);
 
@@ -112,6 +123,5 @@ router.post('/export', async (req, res) => {
         res.status(500).send('Error processing the image.');
     }
 });
-
 
 export default router;
