@@ -57,11 +57,12 @@ router.post('/export', async (req, res) => {
 
     try {
         const watermarkBuffer = await sharp(watermarkImagePath)
-            .resize(parseInt(size), parseInt(size))
+            .resize(parseInt(size*1.5), parseInt(size*1.5))
             .png()
             .toBuffer();
 
         const { width, height } = await sharp(regularImagePath).metadata();
+        const { width: watermarkWidth, height: watermarkHeight } = await sharp(watermarkBuffer).metadata();
 
         let left = 0;
         let top = 0;
@@ -73,16 +74,20 @@ router.post('/export', async (req, res) => {
                 top = margin;
                 break;
             case 'top-right':
-                left = width - parseInt(size) - margin;
+                left = width - watermarkWidth - margin;
                 top = margin;
                 break;
             case 'bottom-left':
                 left = margin;
-                top = height - parseInt(size) - margin;
+                top = height - watermarkHeight - margin;
                 break;
             case 'bottom-right':
-                left = width - parseInt(size) - margin;
-                top = height - parseInt(size) - margin;
+                left = width - watermarkWidth - margin;
+                top = height - watermarkHeight - margin;
+                break;
+            case 'center':
+                left = Math.round((width - watermarkWidth) / 2);
+                top = Math.round((height - watermarkHeight) / 2);
                 break;
         }
 
@@ -91,6 +96,7 @@ router.post('/export', async (req, res) => {
                 input: watermarkBuffer,
                 top: top,
                 left: left,
+                blend: 'over', // image should be over the image
                 opacity: parseInt(opacity) / 100
             }])
             .toFile(outputImagePath);

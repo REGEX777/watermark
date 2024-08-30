@@ -1,20 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Watermark Positioning</title>
     <link rel="stylesheet" href="/css/output.css">
 </head>
+
 <body class="bg-gray-900 flex items-center justify-center min-h-screen">
     <div class="bg-gray-800 p-8 rounded-lg shadow-lg w-full max-w-4xl">
         <h1 class="text-3xl font-bold mb-6 text-center text-white">Position Your Watermark</h1>
         <div class="flex justify-center mb-6">
-            <div class="relative">
+            <div id="imageContainer" class="relative">
                 <img src="/uploads/<%= regularImage %>" alt="Regular Image" id="regularImage"
-                     class="w-[800px] h-auto rounded-md">
+                    class="w-[800px] h-auto rounded-md">
                 <img src="/uploads/<%= watermarkImage %>" alt="Watermark" id="watermarkImage"
-                     class="absolute w-10 h-10 opacity-75 rounded-md transform translate-x-1/2 translate-y-1/2 top-1/2 left-1/2">
+                    class="absolute w-10 h-10 opacity-75 rounded-md">
             </div>
         </div>
         <form action="/editor/export" method="post" class="space-y-4">
@@ -38,41 +40,48 @@
                     <option value="80">80x80</option>
                     <option value="90">90x90</option>
                     <option value="100">100x100</option>
+                    <option value="120">120x120</option>
+                    <option value="140">140x140</option>
+                    <option value="160">160x160</option>
                 </select>
             </div>
             <div class="grid grid-cols-2 gap-4 mb-6">
                 <button type="button" data-position="top-left"
-                        class="position-button bg-indigo-600 text-white py-2 px-4 rounded-md shadow-sm hover:bg-indigo-700">
+                    class="position-button bg-indigo-600 text-white py-2 px-4 rounded-md shadow-sm hover:bg-indigo-700">
                     Top Left
                 </button>
                 <button type="button" data-position="top-right"
-                        class="position-button bg-indigo-600 text-white py-2 px-4 rounded-md shadow-sm hover:bg-indigo-700">
+                    class="position-button bg-indigo-600 text-white py-2 px-4 rounded-md shadow-sm hover:bg-indigo-700">
                     Top Right
                 </button>
                 <button type="button" data-position="bottom-left"
-                        class="position-button bg-indigo-600 text-white py-2 px-4 rounded-md shadow-sm hover:bg-indigo-700">
+                    class="position-button bg-indigo-600 text-white py-2 px-4 rounded-md shadow-sm hover:bg-indigo-700">
                     Bottom Left
                 </button>
                 <button type="button" data-position="bottom-right"
-                        class="position-button bg-indigo-600 text-white py-2 px-4 rounded-md shadow-sm hover:bg-indigo-700">
+                    class="position-button bg-indigo-600 text-white py-2 px-4 rounded-md shadow-sm hover:bg-indigo-700">
                     Bottom Right
+                </button>
+                <button type="button" data-position="center"
+                    class="position-button bg-indigo-600 text-white py-2 px-4 rounded-md shadow-sm hover:bg-indigo-700">
+                    Center
                 </button>
             </div>
             <div class="flex justify-center">
-                <button type="submit"
-                        class="bg-green-600 text-white py-2 px-4 rounded-md shadow-sm hover:bg-green-700">
+                <button type="submit" class="bg-green-600 text-white py-2 px-4 rounded-md shadow-sm hover:bg-green-700">
                     Export Image
                 </button>
             </div>
         </form>
     </div>
-    
+
     <script>
         const watermarkImage = document.getElementById('watermarkImage');
         const watermarkPosition = document.getElementById('watermarkPosition');
         const positionButtons = document.querySelectorAll('.position-button');
         const opacityInput = document.getElementById('opacity');
         const sizeDropdown = document.getElementById('size');
+        const imageContainer = document.getElementById('imageContainer');
 
         watermarkPosition.value = 'center';
         watermarkImage.style.opacity = opacityInput.value / 100;
@@ -84,36 +93,61 @@
             watermarkImage.style.opacity = opacityInput.value / 100;
         });
 
-        // real time siez
+        // real time size
         sizeDropdown.addEventListener('change', () => {
             watermarkImage.style.width = `${sizeDropdown.value}px`;
             watermarkImage.style.height = `${sizeDropdown.value}px`;
+            setPosition(watermarkPosition.value);
         });
 
         positionButtons.forEach(button => {
             button.addEventListener('click', () => {
                 const position = button.getAttribute('data-position');
                 watermarkPosition.value = position;
-
-                watermarkImage.classList.remove('top-1/2', 'left-1/2', 'bottom-1/2', 'right-1/2', 'translate-x-1/2', 'translate-y-1/2');
-                watermarkImage.classList.remove('top-0', 'left-0', 'bottom-0', 'right-0');
-
-                switch (position) {
-                    case 'top-left':
-                        watermarkImage.classList.add('top-0', 'left-0', 'm-2');
-                        break;
-                    case 'top-right':
-                        watermarkImage.classList.add('top-0', 'right-0', 'm-2');
-                        break;
-                    case 'bottom-left':
-                        watermarkImage.classList.add('bottom-0', 'left-0', 'm-2');
-                        break;
-                    case 'bottom-right':
-                        watermarkImage.classList.add('bottom-0', 'right-0', 'm-2');
-                        break;
-                }
+                setPosition(position);
             });
         });
+
+        function setPosition(position) {
+            const containerWidth = imageContainer.clientWidth;
+            const containerHeight = imageContainer.clientHeight;
+            const watermarkWidth = watermarkImage.clientWidth;
+            const watermarkHeight = watermarkImage.clientHeight;
+
+            switch (position) {
+                case 'top-left':
+                    watermarkImage.style.position = 'absolute';
+                    watermarkImage.style.left = '0px';
+                    watermarkImage.style.top = '0px';
+                    watermarkImage.style.transform = 'none';
+                    break;
+                case 'top-right':
+                    watermarkImage.style.position = 'absolute';
+                    watermarkImage.style.left = `${containerWidth - watermarkWidth}px`;
+                    watermarkImage.style.top = '0px';
+                    watermarkImage.style.transform = 'none';
+                    break;
+                case 'bottom-left':
+                    watermarkImage.style.position = 'absolute';
+                    watermarkImage.style.left = '0px';
+                    watermarkImage.style.top = `${containerHeight - watermarkHeight}px`;
+                    watermarkImage.style.transform = 'none';
+                    break;
+                case 'bottom-right':
+                    watermarkImage.style.position = 'absolute';
+                    watermarkImage.style.left = `${containerWidth - watermarkWidth}px`;
+                    watermarkImage.style.top = `${containerHeight - watermarkHeight}px`;
+                    watermarkImage.style.transform = 'none';
+                    break;
+                case 'center':
+                    watermarkImage.style.position = 'absolute';
+                    watermarkImage.style.left = `${(containerWidth - watermarkWidth) / 2}px`;
+                    watermarkImage.style.top = `${(containerHeight - watermarkHeight) / 2}px`;
+                    watermarkImage.style.transform = 'none';
+                    break;
+            }
+        }
     </script>
 </body>
+
 </html>
