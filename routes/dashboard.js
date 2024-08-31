@@ -1,8 +1,9 @@
 import express from 'express';
+import { requireLogin } from '../middleware/requireLogin.js';
 
 const router = express.Router();
 
-router.get('/', (req, res)=>{
+router.get('/', requireLogin, (req, res)=>{
     res.render('dashboard')
 })
 

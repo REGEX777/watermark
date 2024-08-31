@@ -5,7 +5,7 @@ import fs from 'fs';
 import path from 'path';
 
 import { fileURLToPath } from 'url';
-
+import { isLoggedOut } from '../middleware/isLoggedOut.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -29,7 +29,7 @@ const logAttempt = (email, ip, success) => {
     });
 };
 
-router.get('/', (req, res) => {
+router.get('/', isLoggedOut, (req, res) => {
     res.render('login');
 });
 

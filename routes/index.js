@@ -4,6 +4,7 @@ import fs from 'fs/promises';
 import { fileURLToPath } from 'url';
 import multer from 'multer';
 import { v4 as uuidv4 } from 'uuid';
+import { requireLogin } from '../middleware/requireLogin.js'; 
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -39,13 +40,13 @@ const upload = multer({
     fileFilter: fileFilter
 });
 
-router.get('/', (req, res)=>{
+router.get('/', requireLogin, (req, res)=>{
     res.render('index')
 })
 
 
 // upload route
-router.post('/', upload.fields([{ name: 'regularImage' }, { name: 'watermarkImage' }]), async (req, res) => {
+router.post('/', requireLogin, upload.fields([{ name: 'regularImage' }, { name: 'watermarkImage' }]), async (req, res) => {
     try {
         const { regularImage, watermarkImage } = req.files;
 

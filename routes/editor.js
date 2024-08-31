@@ -3,13 +3,14 @@ import path from 'path';
 import fs from 'fs/promises';
 import sharp from 'sharp';
 import { fileURLToPath } from 'url';
+import { requireLogin } from '../middleware/requireLogin.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const router = express.Router();
 
-router.get('/', (req, res) => {
+router.get('/', requireLogin, (req, res) => {
     const { regularImage, watermarkImage } = req.query;
 
     if (!regularImage || !watermarkImage) {
@@ -22,7 +23,7 @@ router.get('/', (req, res) => {
     });
 });
 
-router.post('/upload', async (req, res) => {
+router.post('/upload', requireLogin, async (req, res) => {
     try {
         const { regularImage, watermarkImage } = req.files;
 
@@ -48,7 +49,7 @@ router.post('/upload', async (req, res) => {
     }
 });
 
-router.post('/export', async (req, res) => {
+router.post('/export', requireLogin, async (req, res) => {
     const { regularImage, watermarkImage, position, opacity, size } = req.body;
 
     const regularImagePath = path.join(__dirname, '..', 'public', 'uploads', regularImage);

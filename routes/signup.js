@@ -43,7 +43,6 @@ router.post('/', [
             password
         } = req.body;
         const hashedPassword = await bcrypt.hash(password, 10);
-        const apiKey = generateApiKey()
 
         const newUser = new User({
             email,
@@ -58,8 +57,7 @@ router.post('/', [
                 });
             }
             return res.status(201).json({
-                message: 'User created successfully.',
-                apiKey
+                message: 'User created successfully.'
             });
         });
     } catch (err) {
